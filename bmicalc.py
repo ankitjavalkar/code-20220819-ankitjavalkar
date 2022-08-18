@@ -85,6 +85,17 @@ class BMICalculator():
         for k, v in cat_count.items():
             print('Number of {} people = {}'.format(k, v))
 
+    def load_data_with_pandas(self, json_data=INPUT_FIXTURE):
+        self.ht_wt_params = pd.read_json(json_data)
+        return self.ht_wt_params
+
+    def get_bmi_result_with_pandas():
+        if not self.ht_wt_params:
+            raise ValueError(
+                'No input data available. Use `load_data` method to add'
+                ' height, weight, input data'
+            )
+
     def _convert_cm_to_m(self, value):
         return (value / 100)
 
