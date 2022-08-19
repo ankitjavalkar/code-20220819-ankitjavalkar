@@ -23,13 +23,13 @@ You can use the library as follows:
 1. Clone this repository
 
 ```
-git clone 
+git clone https://github.com/ankitjavalkar/code-20220819-ankitjavalkar.git bmi_calculator
 ```
 
 2. Switch to the directory containing the `bmicalc.py` file
 
 ```
-cd ~/bmi_calculator
+cd ./bmi_calculator
 ```
 
 3. Install requirements (this will install `pandas`) if you would prefer to use this module with pandas as the data processing engine (Recommended for very large input datasets) - it is not a mandatory dependency.
@@ -89,7 +89,7 @@ bmi.load_data_with_pandas() # To load the default data
 bmi.get_bmi_result_with_pandas()
 ```
 
-7a. Calculate aggregation of number of rows in each category by running;
+7B. Calculate aggregation of number of rows in each category by running;
 
 ```
 bmi.display_category_count_with_pandas()
