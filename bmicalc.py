@@ -25,11 +25,14 @@ class BMICalculator():
             raise ValueError("height_unit parameter must be 'cm' or 'm'")
         if weight_unit not in ['g', 'kg']:
             raise ValueError("weight_unit parameter must be 'g' or 'kg'")
+        if not height or not weight or height == 0:
+            raise ValueError("Height and Weight cannot be 0 or Null")
 
         if height_unit == 'cm':
             height = self._convert_cm_to_m(height)
         if weight_unit == 'g':
             weight = self._convert_g_to_kg(weight)
+
 
         bmi_value = weight / (height ** 2)
         return bmi_value
