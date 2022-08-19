@@ -1,4 +1,5 @@
 import json
+import os
 
 import pandas as pd
 
@@ -11,7 +12,12 @@ class BMICalculator():
     weight_unit = 'kg' # Can be `g` or `kg`
 
     def load_data(self, json_data=INPUT_FIXTURE):
-        self.ht_wt_params = json.loads(json_data)
+        if os.path.isfile(json_data) and json_data.endswith('.json'):
+            with open(json_data, 'r') as jf:
+                json_str = jf.read()
+        else:
+            json_str = json_data
+        self.ht_wt_params = json.loads(json_str)
         return self.ht_wt_params
 
     def _calculate_bmi(self, height, weight, height_unit, weight_unit):
