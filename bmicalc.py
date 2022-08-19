@@ -51,6 +51,7 @@ class BMICalculator():
                     ' blank or invalid height/weight values'
                     'height: {} | weight : {}'.format(ix, ht, wt)
                 )
+                continue
             
             bmi_value = self._calculate_bmi(
                 ht, wt,
@@ -67,14 +68,8 @@ class BMICalculator():
 
     def _get_category_count(self, bmi_result):
         cat_count = {}
-
-        # Check if bmi_result param is a Dataframe obj or a list obj
-        if isinstance(bmi_result, pd.DataFrame):
-            iter_rows = bmi_result.iterrows()
-        elif isinstance(bmi_result, list):
-            iter_rows = enumerate(bmi_result)
         
-        for ix, res in iter_rows:
+        for res in bmi_result:
             cnt = cat_count.setdefault(res.get('BmiCategory'), 0)
             cnt = cnt + 1
             cat_count[res.get('BmiCategory')] = cnt
@@ -89,12 +84,43 @@ class BMICalculator():
         self.ht_wt_params = pd.read_json(json_data)
         return self.ht_wt_params
 
-    def get_bmi_result_with_pandas():
-        if not self.ht_wt_params:
+    def get_bmi_result_with_pandas(self):
+        if self.ht_wt_params is None:
             raise ValueError(
-                'No input data available. Use `load_data` method to add'
+                'No input data available. Use `load_data_with_pandas` method to add'
                 ' height, weight, input data'
             )
+        self.bmi_result = self.ht_wt_params.copy(deep=True)
+
+        # Calc and create a Bmi column in the Dataframe
+        self.bmi_result['Bmi'] = self.bmi_result.apply(
+            lambda row: self._calculate_bmi(
+                row['HeightCm'],
+                row['WeightKg'],
+                height_unit=self.height_unit,
+                weight_unit=self.weight_unit,
+            ),
+            axis=1,
+        )
+
+        # Find and add `BmiCategory` and `HealthRisk` to new columns in Dataframe
+        self.bmi_result[['BmiCategory', 'HealthRisk']] = self.bmi_result.apply(
+            lambda row: self._get_multiple_key_vals(
+                self._get_bmi_cat_and_health_risk(
+                    row['Bmi'],
+                ),
+                keys=['category', 'health_risk']
+            ),
+            result_type='expand',
+            axis=1,
+        )
+        return self.bmi_result
+
+    def display_category_count_with_pandas(self):
+        return self.bmi_result.groupby('BmiCategory')['BmiCategory'].count()
+
+    def _get_multiple_key_vals(self, x, keys):
+        return [x.get(k) for k in keys]
 
     def _convert_cm_to_m(self, value):
         return (value / 100)
